@@ -196,7 +196,15 @@ export default function ValuesSection({ selectedUserType }: ValuesSectionProps) 
                   <span>{currentValue.description}</span>
                 </div>
 
-                <button className="flex items-center gap-3 text-[16px] text-[#0E0F11] group hover:text-[#9AA1A9] transition-colors border-b border-[#0E0F11] pb-1">
+                <button 
+                  onClick={() => {
+                    const url = selectedUserType 
+                      ? `/values?type=${selectedUserType}` 
+                      : '/values'
+                    window.location.href = url
+                  }}
+                  className="flex items-center gap-3 text-[16px] text-[#0E0F11] group hover:text-[#9AA1A9] transition-colors border-b border-[#0E0F11] pb-1"
+                >
                   Read more
                   <div className="w-6 h-6 bg-[#0E0F11] rounded-full flex items-center justify-center group-hover:bg-[#9AA1A9] transition-colors">
                     <span className="text-white text-xs">↗</span>

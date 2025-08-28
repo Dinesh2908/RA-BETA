@@ -224,6 +224,17 @@ export default function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Handle URL query parameters for form display
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const showFormParam = urlParams.get('showForm')
+    if (showFormParam === 'tenant' || showFormParam === 'landlord') {
+      setShowForm(showFormParam)
+      // Clear the URL parameter after setting the form
+      window.history.replaceState({}, document.title, window.location.pathname)
+    }
+  }, [])
+
   const getPlatformText = () => {
     if (selectedUserType === "landlord") {
       return {
@@ -272,14 +283,15 @@ export default function HomePage() {
 
         <div className="flex items-center gap-4">
           <button 
-            onClick={() => scrollToSection('about-section')}
+            onClick={() => window.location.href = '/about'}
             className="text-sm hover:opacity-80 transition-opacity"
           >
             About
           </button>
+
           <button 
             onClick={() => scrollToSection('waiting-list-section')}
-            className="flex items-center gap-1 text-sm hover:opacity-80 transition-opacity"
+            className="text-sm hover:opacity-80 transition-opacity"
           >
             Join <span className="text-gray-400">⊕</span>
           </button>
@@ -345,6 +357,7 @@ export default function HomePage() {
                     >
                       Landlord
                     </button>
+                    <span className="block sm:inline"> /</span>
                     <span className="sm:hidden">/</span>
                     <br className="hidden sm:block" />
                     <button
@@ -355,6 +368,7 @@ export default function HomePage() {
                     >
                       Tenant
                     </button>
+                    <span className="block sm:inline"> ?</span>
                   </div>
                 </h1>
 
@@ -525,6 +539,9 @@ export default function HomePage() {
       {/* Our Values Section */}
       <div id="values-section">
         <ValuesSection selectedUserType={selectedUserType} />
+        <div className="flex justify-center mt-8">
+
+        </div>
       </div>
 
       <section id="about-section" className="px-4 py-12" style={{ backgroundColor: "#111827" }}>
@@ -552,7 +569,11 @@ export default function HomePage() {
                 people have shown interest in early access across PGs, flats, and gated communities.
               </p>
 
-              <Button className="text-white rounded-full px-6 hover:opacity-90" style={{ backgroundColor: "#111827" }}>
+              <Button 
+                onClick={() => window.location.href = '/about'}
+                className="text-white rounded-full px-6 hover:opacity-90" 
+                style={{ backgroundColor: "#111827" }}
+              >
                 read more →
               </Button>
             </div>
