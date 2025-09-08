@@ -121,3 +121,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hide scrollbars for testimonial rows */
+.overflow-x-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.overflow-x-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

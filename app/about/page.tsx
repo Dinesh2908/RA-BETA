@@ -53,6 +53,12 @@ export default function AboutPage() {
             Back to Home
           </button>
           <button 
+            onClick={() => router.push('/stories')}
+            className="text-sm hover:opacity-80 transition-opacity"
+          >
+            Stories
+          </button>
+          <button 
             onClick={() => {
               const url = selectedUserType 
                 ? `/values?type=${selectedUserType}` 

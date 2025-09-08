@@ -288,6 +288,12 @@ export default function HomePage() {
           >
             About
           </button>
+          <button 
+            onClick={() => window.location.href = '/stories'}
+            className="text-sm hover:opacity-80 transition-opacity"
+          >
+            Stories
+          </button>
 
           <button 
             onClick={() => scrollToSection('waiting-list-section')}
