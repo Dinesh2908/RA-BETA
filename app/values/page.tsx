@@ -5,8 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ArrowRight, HelpCircle, Mail, ArrowLeft, Users, Target, Shield, TrendingUp, CheckCircle, Home, Building } from "lucide-react"
+import { ArrowRight, Users, Target, Shield, TrendingUp, CheckCircle } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
+import PageLayout from "@/components/page-layout"
+import HeroSection from "@/components/hero-section"
+import CTASection from "@/components/cta-section"
+import { useApp } from "@/contexts/app-context"
 
 const landlordValues = [
   {
@@ -209,177 +213,55 @@ const defaultValues = [
 export default function ValuesPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const userType = searchParams.get('type') as "landlord" | "tenant" | null
-  
-  const [selectedUserType, setSelectedUserType] = useState<"landlord" | "tenant" | null>(userType || "tenant")
+  const { userType, setUserType } = useApp()
+  const urlUserType = searchParams.get('type') as "landlord" | "tenant" | null
 
-  const values = selectedUserType === "landlord" ? landlordValues : selectedUserType === "tenant" ? tenantValues : defaultValues
+  const values = userType === "landlord" ? landlordValues : userType === "tenant" ? tenantValues : defaultValues
 
   useEffect(() => {
-    if (userType) {
-      setSelectedUserType(userType)
+    if (urlUserType) {
+      setUserType(urlUserType)
     }
-  }, [userType])
+  }, [urlUserType, setUserType])
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#FBF8F3" }}>
-      {/* Header */}
-      <header className="flex items-center justify-between p-4 bg-white relative">
-        <div className="flex items-center gap-6">
-          <button className="flex items-center gap-1 text-sm">
-            Help <HelpCircle className="w-4 h-4 text-gray-400" />
-          </button>
-          <button 
-            onClick={() => document.getElementById('values-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="text-sm hover:opacity-80 transition-opacity"
-          >
-            Values <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-          </button>
-        </div>
-
-        <div className="absolute left-1/2 transform -translate-x-1/2">
-          <button onClick={scrollToTop} className="hover:opacity-80 transition-opacity">
-            <img src="/rentaid-logo.png" alt="Rentaid" className="h-18 w-auto" />
-          </button>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => router.push('/')}
-            className="text-sm hover:opacity-80 transition-opacity flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </button>
-          <button 
-            onClick={() => router.push('/')}
-            className="flex items-center gap-1 text-sm hover:opacity-80 transition-opacity"
-          >
-            Join <span className="text-gray-400">⊕</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Sticky Switch - Always Visible */}
-      <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-40">
-        <div className="flex items-center bg-white rounded-full shadow-lg border border-gray-200 px-2 py-1">
-          <button
-            onClick={() => setSelectedUserType("tenant")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 ${
-              selectedUserType === "tenant" 
-                ? "text-white shadow-sm" 
-                : "text-gray-600 hover:text-gray-800"
-            }`}
-            style={{
-              backgroundColor: selectedUserType === "tenant" ? "#14B8A6" : "transparent"
-            }}
-          >
-            <Home className="w-4 h-4" />
-            <span className="text-sm font-medium">Tenant</span>
-          </button>
-          <button
-            onClick={() => setSelectedUserType("landlord")}
-                              className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 ${
-                    selectedUserType === "landlord" 
-                      ? "text-white shadow-sm" 
-                      : "text-gray-600 hover:text-gray-800"
-                  }`}
-            style={{
-              backgroundColor: selectedUserType === "landlord" ? "#14B8A6" : "transparent"
-            }}
-          >
-            <Building className="w-4 h-4" />
-            <span className="text-sm font-medium">Landlord</span>
-          </button>
-        </div>
-      </div>
-
+    <PageLayout
+      showBackButton={true}
+      showValuesButton={true}
+      showStickySwitch={true}
+      onScrollToSection={(sectionId) => document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' })}
+      onScrollToTop={scrollToTop}
+    >
       {/* Hero Section */}
-      <section className="px-4 md:px-12 py-12 md:py-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
-            {/* Left Column - Typography */}
-            <div className="lg:col-span-5 space-y-6 md:space-y-8">
-              <div className="space-y-4 md:space-y-6">
-                <Badge className="mb-4" style={{ backgroundColor: "#14B8A6", color: "#0F172A" }}>
-                  Our Values
-                </Badge>
-                <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-[0.92] tracking-tight">
-                  The principles
-                  <br />
-                  that guide
-                  <br />
-                  <span style={{ color: "#14B8A6" }}>our mission</span>
-                </h1>
-              </div>
-
-              <p className="text-base md:text-lg text-gray-500 leading-relaxed">
-                {selectedUserType === "landlord" 
-                  ? "Discover how our values shape the landlord experience and drive success in property management."
-                  : selectedUserType === "tenant"
-                  ? "Explore the values that ensure your rights, security, and satisfaction as a tenant."
-                  : "Learn about the core values that drive innovation and positive change in the rental industry."
-                }
-              </p>
-
-              {/* Jumbo CTA at bottom left */}
-              <div className="pt-8 md:pt-12">
-                <button
-                  className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                  style={{ backgroundColor: "#35D0A5" }}
-                >
-                  <ArrowRight className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
-                </button>
-              </div>
-            </div>
-
-            {/* Right Column - Media Cards */}
-            <div className="lg:col-span-7 space-y-4 md:space-y-6">
-              {/* Floating utility buttons */}
-              <div className="flex justify-end gap-3 mb-6 md:mb-8">
-                <button className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
-                  <Mail className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-                </button>
-              </div>
-
-              <Card
-                className="rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                style={{ backgroundColor: "#D8E6FF" }}
-              >
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-bold uppercase tracking-wide text-gray-900 leading-tight">
-                    A PLATFORM TO
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <div className="bg-white border-2 border-gray-300 rounded-full px-4 py-1">
-                      <span className="text-sm font-medium text-gray-700">——</span>
-                    </div>
-                    <span className="text-2xl font-bold uppercase tracking-wide text-gray-900">
-                      EMBODY
-                    </span>
-                  </div>
-                  <p className="text-2xl font-bold uppercase tracking-wide text-gray-900">CORE VALUES</p>
-                </div>
-              </Card>
-
-              {/* Bottom Image Card */}
-              <div className="relative group">
-                <Card className="bg-gray-100 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <img
-                    src="/collaborative-workspace.png"
-                    alt="Collaborative workspace"
-                    className="w-full h-48 object-cover rounded-2xl"
-                  />
-                </Card>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection
+        title={
+          <>
+            The principles
+            <br />
+            that guide
+            <br />
+            <span style={{ color: "#14B8A6" }}>our mission</span>
+          </>
+        }
+        description={userType === "landlord" 
+          ? "Discover how our values shape the landlord experience and drive success in property management."
+          : userType === "tenant"
+          ? "Explore the values that ensure your rights, security, and satisfaction as a tenant."
+          : "Learn about the core values that drive innovation and positive change in the rental industry."
+        }
+        badge="Our Values"
+        platformText={{
+          title: "A PLATFORM TO",
+          subtitle: "EMBODY",
+          description: "CORE VALUES"
+        }}
+        image="/collaborative-workspace.png"
+        imageAlt="Collaborative workspace"
+      />
 
       {/* Main Values Section */}
       <section id="values-section" className="px-4 md:px-12 py-16 bg-[#F4F5F6]">
@@ -477,30 +359,21 @@ export default function ValuesPage() {
       </section>
 
       {/* CTA Section */}
-      <section id="waiting-list-section" className="bg-emerald-700 text-white px-4 py-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="text-5xl font-bold">
-              JOIN{" "}
-              <span className="inline-flex items-center mx-2">
-                <div className="bg-white text-emerald-700 px-3 py-1 rounded-full text-sm font-medium">——</div>
-              </span>{" "}
-              THE
-              <br />
-              WAITING LIST
-            </h2>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Button 
-              onClick={() => router.push('/?showForm=tenant')}
-              className="bg-white text-emerald-700 hover:bg-gray-100 rounded-full px-8 py-3 font-medium"
-            >
-              join now →
-            </Button>
-          </div>
-        </div>
-      </section>
-    </div>
+      <CTASection
+        title={
+          <>
+            JOIN{" "}
+            <span className="inline-flex items-center mx-2">
+              <div className="bg-white text-emerald-700 px-3 py-1 rounded-full text-sm font-medium">——</div>
+            </span>{" "}
+            THE
+            <br />
+            WAITING LIST
+          </>
+        }
+        buttonText="join now →"
+        onButtonClick={() => router.push('/?showForm=tenant')}
+      />
+    </PageLayout>
   )
 }

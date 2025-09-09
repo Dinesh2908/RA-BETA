@@ -4,12 +4,16 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, HelpCircle, Mail, X, Home, Building, ArrowLeft, Users, Target, Shield, TrendingUp, CheckCircle } from "lucide-react"
+import { ArrowRight, Users, Target, Shield, TrendingUp, CheckCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
+import PageLayout from "@/components/page-layout"
+import HeroSection from "@/components/hero-section"
+import CTASection from "@/components/cta-section"
+import { useApp } from "@/contexts/app-context"
 
 export default function AboutPage() {
   const router = useRouter()
-  const [selectedUserType, setSelectedUserType] = useState<"landlord" | "tenant" | null>(null)
+  const { userType, setUserType } = useApp()
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -23,140 +27,35 @@ export default function AboutPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#FBF8F3" }}>
-      {/* Header */}
-      <header className="flex items-center justify-between p-4 bg-white relative">
-        <div className="flex items-center gap-6">
-          <button className="flex items-center gap-1 text-sm">
-            Help <HelpCircle className="w-4 h-4 text-gray-400" />
-          </button>
-          <button 
-            onClick={() => scrollToSection('values-section')}
-            className="flex items-center gap-1 text-sm hover:opacity-80 transition-opacity"
-          >
-            Values <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-          </button>
-        </div>
-
-        <div className="absolute left-1/2 transform -translate-x-1/2">
-          <button onClick={scrollToTop} className="hover:opacity-80 transition-opacity">
-            <img src="/rentaid-logo.png" alt="Rentaid" className="h-18 w-auto" />
-          </button>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => router.push('/')}
-            className="text-sm hover:opacity-80 transition-opacity flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </button>
-          <button 
-            onClick={() => router.push('/stories')}
-            className="text-sm hover:opacity-80 transition-opacity"
-          >
-            Stories
-          </button>
-          <button 
-            onClick={() => {
-              const url = selectedUserType 
-                ? `/values?type=${selectedUserType}` 
-                : '/values'
-              router.push(url)
-            }}
-            className="text-sm hover:opacity-80 transition-opacity"
-          >
-            Values
-          </button>
-          <button 
-            onClick={() => router.push('/')}
-            className="flex items-center gap-1 text-sm hover:opacity-80 transition-opacity"
-          >
-            Join <span className="text-gray-400">⊕</span>
-          </button>
-        </div>
-      </header>
-
+    <PageLayout
+      showBackButton={true}
+      showValuesButton={true}
+      onScrollToSection={scrollToSection}
+      onScrollToTop={scrollToTop}
+    >
       {/* Hero Section */}
-      <section className="px-4 md:px-12 py-12 md:py-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
-            {/* Left Column - Typography */}
-            <div className="lg:col-span-5 space-y-6 md:space-y-8">
-              <div className="space-y-4 md:space-y-6">
-                <Badge className="mb-4" style={{ backgroundColor: "#14B8A6", color: "#0F172A" }}>
-                  About RentAid
-                </Badge>
-                <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-[0.92] tracking-tight">
-                  Building the trust
-                  <br />
-                  layer for
-                  <br />
-                  <span style={{ color: "#14B8A6" }}>renting</span>
-                  <br />
-                  in India
-                </h1>
-              </div>
-
-              <p className="text-base md:text-lg text-gray-500 leading-relaxed">
-                We're starting in Hyderabad, creating clean, compliant renting that keeps both sides protected and respected.
-              </p>
-
-              {/* Jumbo CTA at bottom left */}
-              <div className="pt-8 md:pt-12">
-                <button
-                  className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                  style={{ backgroundColor: "#35D0A5" }}
-                >
-                  <ArrowRight className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
-                </button>
-              </div>
-            </div>
-
-            {/* Right Column - Media Cards */}
-            <div className="lg:col-span-7 space-y-4 md:space-y-6">
-              {/* Floating utility buttons */}
-              <div className="flex justify-end gap-3 mb-6 md:mb-8">
-                <button className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
-                  <Mail className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-                </button>
-              </div>
-
-              <Card
-                className="rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                style={{ backgroundColor: "#D8E6FF" }}
-              >
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-bold uppercase tracking-wide text-gray-900 leading-tight">
-                    A PLATFORM TO
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <div className="bg-white border-2 border-gray-300 rounded-full px-4 py-1">
-                      <span className="text-sm font-medium text-gray-700">——</span>
-                    </div>
-                    <span className="text-2xl font-bold uppercase tracking-wide text-gray-900">
-                      REVOLUTIONIZE
-                    </span>
-                  </div>
-                  <p className="text-2xl font-bold uppercase tracking-wide text-gray-900">RENTAL EXPERIENCES</p>
-                </div>
-              </Card>
-
-              {/* Bottom Image Card */}
-              <div className="relative group">
-                <Card className="bg-gray-100 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <img
-                    src="/diverse-group-outdoors.png"
-                    alt="Diverse group collaboration"
-                    className="w-full h-48 object-cover rounded-2xl"
-                  />
-                </Card>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection
+        title={
+          <>
+            Building the trust
+            <br />
+            layer for
+            <br />
+            <span style={{ color: "#14B8A6" }}>renting</span>
+            <br />
+            in India
+          </>
+        }
+        description="We're starting in Hyderabad, creating clean, compliant renting that keeps both sides protected and respected."
+        badge="About RentAid"
+        platformText={{
+          title: "A PLATFORM TO",
+          subtitle: "REVOLUTIONIZE",
+          description: "RENTAL EXPERIENCES"
+        }}
+        image="/diverse-group-outdoors.png"
+        imageAlt="Diverse group collaboration"
+      />
 
       {/* Mission Section */}
       <section className="px-4 md:px-12 py-16">
@@ -336,30 +235,21 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section id="waiting-list-section" className="bg-emerald-700 text-white px-4 py-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="text-5xl font-bold">
-              JOIN{" "}
-              <span className="inline-flex items-center mx-2">
-                <div className="bg-white text-emerald-700 px-3 py-1 rounded-full text-sm font-medium">——</div>
-              </span>{" "}
-              THE
-              <br />
-              WAITING LIST
-            </h2>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Button 
-              onClick={() => router.push('/?showForm=tenant')}
-              className="bg-white text-emerald-700 hover:bg-gray-100 rounded-full px-8 py-3 font-medium"
-            >
-              join now →
-            </Button>
-          </div>
-        </div>
-      </section>
-    </div>
+      <CTASection
+        title={
+          <>
+            JOIN{" "}
+            <span className="inline-flex items-center mx-2">
+              <div className="bg-white text-emerald-700 px-3 py-1 rounded-full text-sm font-medium">——</div>
+            </span>{" "}
+            THE
+            <br />
+            WAITING LIST
+          </>
+        }
+        buttonText="join now →"
+        onButtonClick={() => router.push('/?showForm=tenant')}
+      />
+    </PageLayout>
   )
 }

@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, HelpCircle, Mail, MoreHorizontal, X, Home, Building } from "lucide-react"
+import { X, Home, Building } from "lucide-react"
 import { supabase, testSupabaseConnection } from "@/lib/supabase"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,9 +12,13 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import ValuesSection from "@/components/values-section"
+import PageLayout from "@/components/page-layout"
+import HeroSection from "@/components/hero-section"
+import CTASection from "@/components/cta-section"
+import { useApp } from "@/contexts/app-context"
 
 export default function HomePage() {
-  const [selectedUserType, setSelectedUserType] = useState<"landlord" | "tenant" | null>(null)
+  const { userType, setUserType } = useApp()
   const [isTextFading, setIsTextFading] = useState(false)
   const [showForm, setShowForm] = useState<"tenant" | "landlord" | null>(null)
   const [formSubmitted, setFormSubmitted] = useState(false)
@@ -201,14 +204,14 @@ export default function HomePage() {
   }
 
   useEffect(() => {
-    if (selectedUserType) {
+    if (userType) {
       setIsTextFading(true)
       const timer = setTimeout(() => {
         setIsTextFading(false)
       }, 300)
       return () => clearTimeout(timer)
     }
-  }, [selectedUserType])
+  }, [userType])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -236,13 +239,13 @@ export default function HomePage() {
   }, [])
 
   const getPlatformText = () => {
-    if (selectedUserType === "landlord") {
+    if (userType === "landlord") {
       return {
         title: "A PLATFORM TO",
         subtitle: "PROPERTY",
         description: "MANAGEMENT.",
       }
-    } else if (selectedUserType === "tenant") {
+    } else if (userType === "tenant") {
       return {
         title: "A PLATFORM TO",
         subtitle: "TENANT",
@@ -260,231 +263,26 @@ export default function HomePage() {
   const platformText = getPlatformText()
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#FBF8F3" }}>
-      {/* Header */}
-      <header className="flex items-center justify-between p-4 bg-white relative">
-        <div className="flex items-center gap-6">
-          <button className="flex items-center gap-1 text-sm">
-            Help <HelpCircle className="w-4 h-4 text-gray-400" />
-          </button>
-          <button 
-            onClick={() => scrollToSection('values-section')}
-            className="flex items-center gap-1 text-sm hover:opacity-80 transition-opacity"
-          >
-            Values <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-          </button>
-        </div>
-
-        <div className="absolute left-1/2 transform -translate-x-1/2">
-          <button onClick={scrollToTop} className="hover:opacity-80 transition-opacity">
-            <img src="/rentaid-logo.png" alt="Rentaid" className="h-18 w-auto" />
-          </button>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => window.location.href = '/about'}
-            className="text-sm hover:opacity-80 transition-opacity"
-          >
-            About
-          </button>
-          <button 
-            onClick={() => window.location.href = '/stories'}
-            className="text-sm hover:opacity-80 transition-opacity"
-          >
-            Stories
-          </button>
-
-          <button 
-            onClick={() => scrollToSection('waiting-list-section')}
-            className="text-sm hover:opacity-80 transition-opacity"
-          >
-            Join <span className="text-gray-400">⊕</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Sticky Switch */}
-      <div 
-        className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-300 ease-in-out ${
-          showStickySwitch 
-            ? 'opacity-100 translate-y-0' 
-            : 'opacity-0 -translate-y-2 pointer-events-none'
-        }`}
-      >
-        <div className="flex items-center bg-white rounded-full shadow-lg border border-gray-200 px-2 py-1">
-          <button
-            onClick={() => setSelectedUserType("tenant")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 ${
-              selectedUserType === "tenant" 
-                ? "text-white shadow-sm" 
-                : "text-gray-600 hover:text-gray-800"
-            }`}
-            style={{
-              backgroundColor: selectedUserType === "tenant" ? "#14B8A6" : "transparent"
-            }}
-          >
-            <Home className="w-4 h-4" />
-            <span className="text-sm font-medium">Tenant</span>
-          </button>
-          <button
-            onClick={() => setSelectedUserType("landlord")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 ${
-              selectedUserType === "landlord" 
-                ? "text-white shadow-sm" 
-                : "text-gray-600 hover:text-gray-800"
-            }`}
-            style={{
-              backgroundColor: selectedUserType === "landlord" ? "#14B8A6" : "transparent"
-            }}
-          >
-            <Building className="w-4 h-4" />
-            <span className="text-sm font-medium">Landlord</span>
-          </button>
-        </div>
-      </div>
-
+    <PageLayout
+      showValuesButton={true}
+      showStickySwitch={true}
+      stickySwitchClassName={`transition-all duration-300 ease-in-out ${
+        showStickySwitch 
+          ? 'opacity-100 translate-y-0' 
+          : 'opacity-0 -translate-y-2 pointer-events-none'
+      }`}
+      onScrollToSection={scrollToSection}
+      onScrollToTop={scrollToTop}
+    >
       {/* Hero Section */}
-      <section className="px-4 md:px-12 py-12 md:py-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
-            {/* Left Column - Typography */}
-            <div className="lg:col-span-5 space-y-6 md:space-y-8">
-              <div className="space-y-4 md:space-y-6">
-                <h1 className="text-4xl sm:text-6xl lg:text-8xl font-extrabold text-gray-900 leading-[0.92] tracking-tight">
-                  <span className="block sm:inline">I am a</span>
-                  <br className="hidden sm:block" />
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 sm:block">
-                    <button
-                      onClick={() => setSelectedUserType("landlord")}
-                      className={`hover:opacity-80 transition-opacity ${
-                        selectedUserType === "landlord" ? "text-emerald-600" : ""
-                      }`}
-                    >
-                      Landlord
-                    </button>
-                    <span className="block sm:inline"> /</span>
-                    <span className="sm:hidden">/</span>
-                    <br className="hidden sm:block" />
-                    <button
-                      onClick={() => setSelectedUserType("tenant")}
-                      className={`hover:opacity-80 transition-opacity ${
-                        selectedUserType === "tenant" ? "text-emerald-600" : ""
-                      }`}
-                    >
-                      Tenant
-                    </button>
-                    <span className="block sm:inline"> ?</span>
-                  </div>
-                </h1>
-
-                {selectedUserType && (
-                  <div className="inline-flex items-center bg-gray-100 rounded-full h-12 md:h-16 px-4 md:px-8 pr-3 md:pr-4">
-                    <span className="text-2xl md:text-4xl font-bold text-gray-900 mr-2 md:mr-4 capitalize">
-                      {selectedUserType}
-                    </span>
-                    <div
-                      className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: "#35D0A5" }}
-                    >
-                      <div className="w-5 h-5 md:w-6 md:h-6 rounded-full" style={{ backgroundColor: "#0F6E58" }}>
-                        <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <p className="text-base md:text-lg text-gray-500 leading-relaxed">
-                For those who were
-                <br />
-                <strong className="text-gray-900 font-bold">encouraged</strong>
-                <br />
-                to be leaders.
-              </p>
-
-              {/* Jumbo CTA at bottom left */}
-              <div className="pt-8 md:pt-12">
-                <button
-                  className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                  style={{ backgroundColor: "#35D0A5" }}
-                >
-                  <ArrowRight className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
-                </button>
-              </div>
-            </div>
-
-            {/* Right Column - Media Cards */}
-            <div className="lg:col-span-7 space-y-4 md:space-y-6">
-              {/* Floating utility buttons */}
-              <div className="flex justify-end gap-3 mb-6 md:mb-8">
-                <button className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
-                  <Mail className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-                </button>
-              </div>
-
-              <div className="flex justify-center leading-9">{/* Logo moved to header */}</div>
-
-              <Card
-                className="rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                style={{ backgroundColor: "#D8E6FF" }}
-              >
-                <div
-                  className={`space-y-2 transition-opacity duration-300 ${isTextFading ? "opacity-0" : "opacity-100"}`}
-                >
-                  <h3 className="text-2xl font-bold uppercase tracking-wide text-gray-900 leading-tight">
-                    {platformText.title}{" "}
-                    <div className="inline-flex items-center mx-2">
-                      <Avatar className="w-7 h-7">
-                        <AvatarImage src="/attendee-1.png" />
-                      </Avatar>
-                    </div>{" "}
-                    TO
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <div className="bg-white border-2 border-gray-300 rounded-full px-4 py-1">
-                      <span className="text-sm font-medium text-gray-700">——</span>
-                    </div>
-                    <span className="text-2xl font-bold uppercase tracking-wide text-gray-900">
-                      {platformText.subtitle}
-                    </span>
-                  </div>
-                  <p className="text-2xl font-bold uppercase tracking-wide text-gray-900">{platformText.description}</p>
-                </div>
-              </Card>
-
-              {/* Bottom Image Card */}
-              <div className="relative group">
-                <Card className="bg-gray-100 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <img
-                    src="/desk-collaboration.png"
-                    alt="People collaborating"
-                    className="w-full h-48 object-cover rounded-2xl"
-                  />
-                  {/* Ellipsis chip */}
-                  <div className="absolute top-4 right-4 w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md">
-                    <MoreHorizontal className="w-4 h-4 text-gray-600" />
-                  </div>
-                </Card>
-              </div>
-
-              {/* Bottom right link */}
-            </div>
-          </div>
-
-          {/* Scroll hint */}
-          <div className="flex justify-center pt-16">
-            <div className="flex flex-col items-center opacity-30">
-              <span className="text-sm text-gray-600 mb-2">scroll</span>
-              <div className="animate-bounce">
-                <ArrowRight className="w-4 h-4 text-gray-600 rotate-90" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection
+        title="I am a"
+        description="For those who were encouraged to be leaders."
+        showUserTypeToggle={true}
+        showJumboCTA={true}
+        image="/desk-collaboration.png"
+        imageAlt="People collaborating"
+      />
 
       {/* Course Preview */}
 
@@ -544,7 +342,7 @@ export default function HomePage() {
 
       {/* Our Values Section */}
       <div id="values-section">
-        <ValuesSection selectedUserType={selectedUserType} />
+        <ValuesSection selectedUserType={userType} />
         <div className="flex justify-center mt-8">
 
         </div>
@@ -634,30 +432,21 @@ export default function HomePage() {
       </section>
 
       {/* Join Waiting List */}
-      <section id="waiting-list-section" className="bg-emerald-700 text-white px-4 py-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="text-5xl font-bold">
-              JOIN{" "}
-              <span className="inline-flex items-center mx-2">
-                <div className="bg-white text-emerald-700 px-3 py-1 rounded-full text-sm font-medium">——</div>
-              </span>{" "}
-              THE
-              <br />
-              WAITING LIST
-            </h2>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Button 
-              onClick={() => setShowForm("tenant")}
-              className="bg-white text-emerald-700 hover:bg-gray-100 rounded-full px-8 py-3 font-medium"
-            >
-              join now →
-            </Button>
-          </div>
-        </div>
-      </section>
+      <CTASection
+        title={
+          <>
+            JOIN{" "}
+            <span className="inline-flex items-center mx-2">
+              <div className="bg-white text-emerald-700 px-3 py-1 rounded-full text-sm font-medium">——</div>
+            </span>{" "}
+            THE
+            <br />
+            WAITING LIST
+          </>
+        }
+        buttonText="join now →"
+        onButtonClick={() => setShowForm("tenant")}
+      />
 
       {/* Team Section */}
 
@@ -972,6 +761,6 @@ export default function HomePage() {
           </Card>
         </div>
       )}
-    </div>
+    </PageLayout>
   )
 }

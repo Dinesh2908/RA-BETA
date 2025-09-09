@@ -4,8 +4,12 @@ import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, HelpCircle, Mail, X, Home, Building, ArrowLeft, Users, Target, Shield, TrendingUp, CheckCircle, Star, Quote, ExternalLink, Globe, DollarSign, Lock, Zap } from "lucide-react"
+import { ArrowRight, Quote, ExternalLink, Shield, CheckCircle, Users, Target } from "lucide-react"
 import { useRouter } from "next/navigation"
+import PageLayout from "@/components/page-layout"
+import HeroSection from "@/components/hero-section"
+import CTASection from "@/components/cta-section"
+import { useApp } from "@/contexts/app-context"
 
 // CSV parsing utility
 const parseCSV = (csvText: string) => {
@@ -35,10 +39,10 @@ const extractLink = (postLink: string) => {
 
 export default function StoriesPage() {
   const router = useRouter()
+  const { userType, setUserType } = useApp()
   const [isRow1Paused, setIsRow1Paused] = useState(false)
   const [isRow2Paused, setIsRow2Paused] = useState(false)
   const [selectedSolution, setSelectedSolution] = useState(0)
-  const [userType, setUserType] = useState<"tenant" | "landlord">("tenant")
   const [tenantData, setTenantData] = useState<any[]>([])
   const [landlordData, setLandlordData] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -247,181 +251,50 @@ export default function StoriesPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#FBF8F3" }}>
-      {/* Header */}
-      <header className="flex items-center justify-between p-4 bg-white relative">
-        <div className="flex items-center gap-6">
-          <button className="flex items-center gap-1 text-sm">
-            Help <HelpCircle className="w-4 h-4 text-gray-400" />
-          </button>
-          <button 
-            onClick={() => scrollToSection('solutions-section')}
-            className="flex items-center gap-1 text-sm hover:opacity-80 transition-opacity"
-          >
-            Solutions <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-          </button>
-        </div>
-
-        <div className="absolute left-1/2 transform -translate-x-1/2">
-          <button onClick={scrollToTop} className="hover:opacity-80 transition-opacity">
-            <img src="/rentaid-logo.png" alt="Rentaid" className="h-18 w-auto" />
-          </button>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => router.push('/')}
-            className="text-sm hover:opacity-80 transition-opacity flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </button>
-          <button 
-            onClick={() => router.push('/about')}
-            className="text-sm hover:opacity-80 transition-opacity"
-          >
-            About
-          </button>
-          <button 
-            onClick={() => router.push('/')}
-            className="flex items-center gap-1 text-sm hover:opacity-80 transition-opacity"
-          >
-            Join <span className="text-gray-400">⊕</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Sticky Switch - Always Visible */}
-      <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-40">
-        <div className="flex items-center bg-white rounded-full shadow-lg border border-gray-200 px-2 py-1">
-          <button
-            onClick={() => setUserType("tenant")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 ${
-              userType === "tenant" 
-                ? "text-white shadow-sm" 
-                : "text-gray-600 hover:text-gray-800"
-            }`}
-            style={{
-              backgroundColor: userType === "tenant" ? "#14B8A6" : "transparent"
-            }}
-          >
-            <Home className="w-4 h-4" />
-            <span className="text-sm font-medium">Tenant</span>
-          </button>
-          <button
-            onClick={() => setUserType("landlord")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 ${
-              userType === "landlord" 
-                ? "text-white shadow-sm" 
-                : "text-gray-600 hover:text-gray-800"
-            }`}
-            style={{
-              backgroundColor: userType === "landlord" ? "#14B8A6" : "transparent"
-            }}
-          >
-            <Building className="w-4 h-4" />
-            <span className="text-sm font-medium">Landlord</span>
-          </button>
-        </div>
-      </div>
-
+    <PageLayout
+      showBackButton={true}
+      showSolutionsButton={true}
+      showStickySwitch={true}
+      onScrollToSection={scrollToSection}
+      onScrollToTop={scrollToTop}
+    >
       {/* Hero Section */}
-      <section className="px-4 md:px-12 py-12 md:py-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
-            {/* Left Column - Typography */}
-            <div className="lg:col-span-5 space-y-6 md:space-y-8">
-              <div className="space-y-4 md:space-y-6">
-                <Badge className="mb-4" style={{ backgroundColor: "#14B8A6", color: "#0F172A" }}>
-                  Real Stories
-                </Badge>
-                <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-[0.92] tracking-tight">
-                  {userType === "tenant" ? (
-                    <>
-                      Real
-                      <br />
-                      problems
-                      <br />
-                      <span style={{ color: "#14B8A6" }}>tenants</span>
-                      <br />
-                      face
-                    </>
-                  ) : (
-                    <>
-                      Real
-                      <br />
-                      challenges
-                      <br />
-                      <span style={{ color: "#14B8A6" }}>landlords</span>
-                      <br />
-                      face
-                    </>
-                  )}
-                </h1>
-              </div>
-
-              <p className="text-base md:text-lg text-gray-500 leading-relaxed">
-                {userType === "tenant" 
-                  ? "See the real issues tenants face in the rental market and how RentAid solves them."
-                  : "See the real challenges landlords face in property management and how RentAid helps."
-                }
-              </p>
-
-              {/* Jumbo CTA at bottom left */}
-              <div className="pt-8 md:pt-12">
-                <button
-                  onClick={() => scrollToSection('testimonials-section')}
-                  className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                  style={{ backgroundColor: "#35D0A5" }}
-                >
-                  <ArrowRight className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
-                </button>
-              </div>
-            </div>
-
-            {/* Right Column - Media Cards */}
-            <div className="lg:col-span-7 space-y-4 md:space-y-6">
-              {/* Floating utility buttons */}
-              <div className="flex justify-end gap-3 mb-6 md:mb-8">
-                <button className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
-                  <Mail className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-                </button>
-              </div>
-
-              <Card
-                className="rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                style={{ backgroundColor: "#D8E6FF" }}
-              >
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-bold uppercase tracking-wide text-gray-900 leading-tight">
-                    REAL PEOPLE
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <div className="bg-white border-2 border-gray-300 rounded-full px-4 py-1">
-                      <span className="text-sm font-medium text-gray-700">——</span>
-                    </div>
-                    <span className="text-2xl font-bold uppercase tracking-wide text-gray-900">
-                      REAL
-                    </span>
-                  </div>
-                  <p className="text-2xl font-bold uppercase tracking-wide text-gray-900">RESULTS</p>
-                </div>
-              </Card>
-
-              {/* Bottom Image Card */}
-              <div className="relative group">
-                <Card className="bg-gray-100 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <img
-                    src="/diverse-group-two.png"
-                    alt="Happy users"
-                    className="w-full h-48 object-cover rounded-2xl"
-                  />
-                </Card>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection
+        title={userType === "tenant" ? (
+          <>
+            Real
+            <br />
+            problems
+            <br />
+            <span style={{ color: "#14B8A6" }}>tenants</span>
+            <br />
+            face
+          </>
+        ) : (
+          <>
+            Real
+            <br />
+            challenges
+            <br />
+            <span style={{ color: "#14B8A6" }}>landlords</span>
+            <br />
+            face
+          </>
+        )}
+        description={userType === "tenant" 
+          ? "See the real issues tenants face in the rental market and how RentAid solves them."
+          : "See the real challenges landlords face in property management and how RentAid helps."
+        }
+        badge="Real Stories"
+        platformText={{
+          title: "REAL PEOPLE",
+          subtitle: "REAL",
+          description: "RESULTS"
+        }}
+        image="/diverse-group-two.png"
+        imageAlt="Happy users"
+        onJumboCTAClick={() => scrollToSection('testimonials-section')}
+      />
 
       {/* Success Stories Section */}
       <section id="testimonials-section" className="px-4 md:px-12 py-16 relative overflow-hidden">
@@ -631,6 +504,6 @@ export default function StoriesPage() {
           </div>
         </div>
       </section>
-    </div>
+    </PageLayout>
   )
 }
